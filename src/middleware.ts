@@ -22,6 +22,7 @@ const FULLY_PUBLIC_PATHS = [
 const PROTECTED_API_PREFIXES = [
   "/api/auth/me",
   "/api/sheetSizeCalculations",
+  "/api/total-calcs",
   "/api/mono-carton",
   "/api/devices",
   "/api/payments/create-order",
