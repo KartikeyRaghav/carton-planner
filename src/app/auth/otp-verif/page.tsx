@@ -5,13 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function LoginPage() {
-  const { login, resetPasswordGen, isAuthenticated, isLoading } = useAuth();
+export default function OtpVerificationPageContent() {
+  const { signup, otpVerify, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ otp: "" });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   // Redirect already-authenticated users
   useEffect(() => {
@@ -24,32 +23,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
+
     try {
-      await login(form.email, form.password);
+      await otpVerify(form.otp);
+      const data = JSON.parse(localStorage.getItem("signup_form") || "");
+      await signup(data.name, data.email, data.password);
       router.replace("/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsSendingEmail(true);
-    if (!form.email) {
-      setError("Please enter email.");
-      setIsSendingEmail(false);
-      return;
-    }
-    try {
-      await resetPasswordGen(form.email);
-      setError("An email containing reset password link has been sent.");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    } finally {
-      setIsSendingEmail(false);
     }
   };
 
@@ -59,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-surface-50 flex">
       {/* Left panel */}
-      <div className="hidden lg:flex w-[45%] bg-brand-900 flex-col justify-between p-12">
+      <div className="hidden lg:flex w-[45%] bg-surface-900 flex-col justify-between p-12">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-brand-400 flex items-center justify-center">
             <svg
@@ -80,22 +63,28 @@ export default function LoginPage() {
             Carton Planner
           </span>
         </Link>
-        <div>
-          <blockquote className="text-brand-200 text-xl font-300 leading-relaxed mb-6">
-            "The most precise carton layout tool we've used. Saves our team
-            hours every week."
-          </blockquote>
-          <div className="text-brand-400 text-sm">
-            — Packaging Engineer, Mumbai
+        <div className="space-y-6">
+          <h2 className="font-display text-4xl font-700 text-white leading-tight">
+            Calculate sheet sizes
+            <br />
+            in seconds.
+          </h2>
+          <div className="space-y-3">
+            {[
+              "✓ 1-day free trial, no card required",
+              "✓ All carton styles supported",
+              "✓ Full calculation history",
+              "✓ Up to 2 devices per account",
+            ].map((f) => (
+              <p key={f} className="text-surface-400 text-sm">
+                {f}
+              </p>
+            ))}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          {["Self Lock", "Both Side Tuck"].map((s) => (
-            <div key={s} className="bg-brand-800 rounded-xl p-4 text-center">
-              <div className="text-brand-300 text-xs font-medium">{s}</div>
-            </div>
-          ))}
-        </div>
+        <p className="text-surface-600 text-xs">
+          Professional packaging tools for modern print shops.
+        </p>
       </div>
 
       {/* Right panel */}
@@ -103,9 +92,9 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h1 className="font-display font-700 text-3xl text-surface-900 mb-2">
-              Welcome back
+              OTP Verification
             </h1>
-            <p className="text-surface-500">Sign in to your account</p>
+            <p className="text-surface-500">Enter the otp sent to </p>
           </div>
 
           {error && (
@@ -116,66 +105,18 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="label">Email address</label>
+              <label className="label">OTP</label>
               <input
-                type="email"
+                type="number"
                 className="input"
-                placeholder="you@example.com"
-                value={form.email}
+                placeholder="••••••"
+                value={form.otp}
                 onChange={(e) =>
-                  setForm((p) => ({ ...p, email: e.target.value }))
+                  setForm((p) => ({ ...p, otp: e.target.value }))
                 }
                 required
-                autoComplete="email"
               />
             </div>
-            <div>
-              <label className="label">Password</label>
-              <input
-                type="password"
-                className="input"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, password: e.target.value }))
-                }
-                required
-                autoComplete="current-password"
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="btn-secondry text-sm underline w-full py-3"
-            >
-              {isSendingEmail ? (
-                <span className="flex items-center gap-2 justify-center">
-                  <svg
-                    className="animate-spin w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  Sending email...
-                </span>
-              ) : (
-                "Forgot Password"
-              )}
-            </button>
 
             <button
               type="submit"
@@ -203,21 +144,21 @@ export default function LoginPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  Signing in…
+                  Verifying…
                 </span>
               ) : (
-                "Sign in"
+                "Verify"
               )}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-surface-500">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="/auth/signup"
+              href="/auth/login"
               className="text-brand-500 font-medium hover:underline"
             >
-              Create one free
+              Sign In
             </Link>
           </p>
         </div>

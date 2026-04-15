@@ -10,6 +10,10 @@ const FULLY_PUBLIC_PATHS = [
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/logout",
+  "/api/auth/otp-verif",
+  "/api/auth/otp-gen",
+  "/api/auth/reset-password-gen",
+  "/api/auth/reset-password-verif",
   "/api/payments/webhook",
   "/api/subscriptions/plans",
 ];

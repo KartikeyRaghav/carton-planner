@@ -60,7 +60,7 @@ export function calculateCarton(inputs: CartonInputs): CalculationResult {
   let H = height;
   let PF = pastingFlap;
   let TF = tuckInFlap;
-  const LBM = lockBottomMargin;
+  let LBM = lockBottomMargin;
 
   // const L_mm = parseFloat(inputs.length) || 0;
   //       const W_mm = parseFloat(inputs.width) || 0;
@@ -84,6 +84,7 @@ export function calculateCarton(inputs: CartonInputs): CalculationResult {
     H *= mmToInch;
     PF *= mmToInch;
     TF *= mmToInch;
+    LBM *= mmToInch;
   }
 
   const MIN_DIM = 10;
@@ -104,11 +105,11 @@ export function calculateCarton(inputs: CartonInputs): CalculationResult {
   if (cartonStyle === "Self Lock") {
     const singleUnit = {
       length: 2 * L + 2 * W + PF,
-      width: H + 1.5 * W + TF + 12 / 25.4,
+      width: H + 1.5 * W + TF + LBM,
     };
     const pairUnit = {
       length: 2 * L + 2 * W + PF,
-      width: 2 * H + 2 * W + TF + 24 / 25.4,
+      width: 2 * H + 2 * W + TF + 2 * LBM,
     };
 
     for (let numBoxes = 1; numBoxes <= 40; numBoxes++) {

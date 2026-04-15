@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function LoginPage() {
-  const { login, resetPasswordGen, isAuthenticated, isLoading } = useAuth();
+export default function ResetPasswordPageContent() {
+  const { resetPasswordVerify, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const [form, setForm] = useState({ password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   // Redirect already-authenticated users
   useEffect(() => {
@@ -24,32 +25,28 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
+
+    if (!token) {
+      setError("Error in reseting password");
+      setIsSubmitting(false);
+      return;
+    }
+    if (form.password != form.confirmPassword) {
+      setError("Passwords donot match");
+      setIsSubmitting(false);
+      return;
+    }
     try {
-      await login(form.email, form.password);
-      router.replace("/dashboard");
+      await resetPasswordVerify(
+        localStorage.getItem("user_email")!,
+        token,
+        form.password,
+      );
+      router.replace("/auth/login");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsSendingEmail(true);
-    if (!form.email) {
-      setError("Please enter email.");
-      setIsSendingEmail(false);
-      return;
-    }
-    try {
-      await resetPasswordGen(form.email);
-      setError("An email containing reset password link has been sent.");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    } finally {
-      setIsSendingEmail(false);
     }
   };
 
@@ -103,7 +100,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h1 className="font-display font-700 text-3xl text-surface-900 mb-2">
-              Welcome back
+              Reset Password
             </h1>
             <p className="text-surface-500">Sign in to your account</p>
           </div>
@@ -115,20 +112,6 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="label">Email address</label>
-              <input
-                type="email"
-                className="input"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, email: e.target.value }))
-                }
-                required
-                autoComplete="email"
-              />
-            </div>
             <div>
               <label className="label">Password</label>
               <input
@@ -143,39 +126,19 @@ export default function LoginPage() {
                 autoComplete="current-password"
               />
             </div>
-
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="btn-secondry text-sm underline w-full py-3"
-            >
-              {isSendingEmail ? (
-                <span className="flex items-center gap-2 justify-center">
-                  <svg
-                    className="animate-spin w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  Sending email...
-                </span>
-              ) : (
-                "Forgot Password"
-              )}
-            </button>
+            <div>
+              <label className="label">Confirm Password</label>
+              <input
+                type="password"
+                className="input"
+                placeholder="••••••••"
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, confirmPassword: e.target.value }))
+                }
+                required
+              />
+            </div>
 
             <button
               type="submit"

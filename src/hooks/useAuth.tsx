@@ -21,6 +21,14 @@ interface AuthContextValue {
     password: string,
     deviceName?: string,
   ) => Promise<void>;
+  resetPasswordGen: (email: string) => Promise<void>;
+  resetPasswordVerify: (
+    email: string,
+    token: string,
+    password: string,
+  ) => Promise<void>;
+  otpGen: (email: string) => Promise<void>;
+  otpVerify: (otp: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -119,10 +127,85 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const newToken: string = data.data.token;
     setToken(newToken);
     localStorage.setItem("auth_token", newToken);
+    localStorage.removeItem("signup_form");
     setUser(data.data.user);
 
     // Fetch full profile now that cookie is set by the response
     await refreshUser();
+  };
+
+  const resetPasswordGen = async (email: string) => {
+    try {
+      const res = await fetch("/api/auth/reset-password-gen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.error || "Reset Password Generation Failed");
+
+      localStorage.setItem("user_email", email);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetPasswordVerify = async (
+    email: string,
+    token: string,
+    password: string,
+  ) => {
+    try {
+      const res = await fetch("/api/auth/reset-password-verif", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, token, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.error || "Reset Password Verification Failed");
+
+      localStorage.removeItem("user_email");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const otpGen = async (email: string) => {
+    try {
+      const res = await fetch("/api/auth/otp-gen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Otp Generation Failed");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const otpVerify = async (otp: string) => {
+    try {
+      const res = await fetch("/api/auth/otp-verif", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ otp }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Otp Verification Failed");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const logout = async () => {
@@ -149,6 +232,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        resetPasswordGen,
+        resetPasswordVerify,
+        otpGen,
+        otpVerify,
         signup,
         logout,
         refreshUser,

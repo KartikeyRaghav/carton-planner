@@ -70,7 +70,7 @@ export function useSheetSizeCalculator() {
       !height ||
       !pastingFlap ||
       !tuckInFlap ||
-      !lockBottomMargin
+      (cartonStyle == "Self Lock" && !lockBottomMargin)
     ) {
       setError("Please fill in all fields");
       return;
@@ -124,77 +124,6 @@ export function useSheetSizeCalculator() {
 
   const reset = () => {
     setForm(sheetSizeForm);
-    setResults(null);
-    setError(null);
-  };
-
-  return { form, results, isLoading, error, updateField, calculate, reset };
-}
-
-export function useCartonRateCalculator() {
-  const [form, setForm] = useState<CartonRateForm>(cartonRateForm);
-  const [results, setResults] = useState<SheetLayout[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const updateField = (field: keyof CartonRateForm, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setError(null);
-  };
-
-  const calculate = async () => {
-    const { length, width, height, gsm, rate } = form;
-
-    if (!length || !width || !height || !gsm || !rate) {
-      setError("Please fill in all fields");
-      return;
-    }
-
-    const payload = {
-      length: parseFloat(length),
-      width: parseFloat(width),
-      height: parseFloat(height),
-      gsm: parseFloat(gsm),
-      rate: parseFloat(rate),
-    };
-
-    if (Object.values(payload).some((v) => typeof v === "number" && isNaN(v))) {
-      setError("All dimensions must be valid numbers");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/cartonRateCalculations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 403) {
-          setError(data.error + " Please upgrade your subscription.");
-        } else {
-          setError(data.error || "Calculation failed");
-        }
-        return;
-      }
-
-      setResults(data.data.calculation.results);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const reset = () => {
-    setForm(cartonRateForm);
     setResults(null);
     setError(null);
   };

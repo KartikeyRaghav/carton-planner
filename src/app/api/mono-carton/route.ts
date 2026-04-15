@@ -77,7 +77,9 @@ export async function POST(req: NextRequest) {
 
     const results = calculateMonoCarton(parsed.data);
     console.log(results);
-    const record = await prisma.monoCartonCalculation.create({
+    const record = await prisma.monoCartonCalculation
+    
+.create({
       data: {
         userId: Number(userId),
         packagingFormat: parsed.data.bagRate != 0 ? "bag" : "box",

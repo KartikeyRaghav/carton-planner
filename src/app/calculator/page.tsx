@@ -143,25 +143,27 @@ export default function CalculatorPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1">
-                <div>
-                  <label className="label">
-                    Lock Bottom/Self Lock Margin (LBM)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    className="input"
-                    placeholder="0"
-                    value={form.lockBottomMargin}
-                    onChange={(e) =>
-                      updateField("lockBottomMargin", e.target.value)
-                    }
-                    disabled={!hasAccess}
-                  />
+              {form.cartonStyle === "Self Lock" && (
+                <div className="grid grid-cols-1">
+                  <div>
+                    <label className="label">
+                      Lock Bottom/Self Lock Margin (LBM)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      className="input"
+                      placeholder="0"
+                      value={form.lockBottomMargin}
+                      onChange={(e) =>
+                        updateField("lockBottomMargin", e.target.value)
+                      }
+                      disabled={!hasAccess}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Error */}
               {error && (

@@ -131,3 +131,19 @@ model MonoCartonCalculation {
   @@index([userId])
   @@map("mono_carton_calculations")
 }
+
+model OtpVerification {
+  id        Int      @id @default(autoincrement())
+  expiresAt DateTime
+  token     String
+
+  @@map("otpverif")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+
+  @@map("passwordResetToken")
+}

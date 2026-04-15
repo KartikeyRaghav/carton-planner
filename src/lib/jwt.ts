@@ -35,3 +35,21 @@ export function extractToken(authHeader: string | null): string | null {
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
   return authHeader.substring(7);
 }
+
+export function otpToken(email: string, otp: number): string {
+  return jwt.sign({ email, otp }, JWT_SECRET, {
+    expiresIn: "15m",
+  } as jwt.SignOptions);
+}
+
+export async function verifyOtpToken(
+  token: string,
+): Promise<{ email: string; otp: number } | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    return payload as any;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}

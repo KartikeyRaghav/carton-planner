@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function SignupPage() {
-  const { signup, isAuthenticated, isLoading } = useAuth();
+  const { otpGen, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
@@ -37,10 +37,11 @@ export default function SignupPage() {
     setError("");
     setIsSubmitting(true);
     try {
-      await signup(form.name, form.email, form.password);
-      router.replace("/dashboard");
+      localStorage.setItem("signup_form", JSON.stringify(form));
+      await otpGen(form.email);
+      router.push(`/auth/otp-verif`);
     } catch (err: any) {
-      setError(err.message || "Signup failed");
+      setError(err.message || "Otp Generation failed");
     } finally {
       setIsSubmitting(false);
     }
