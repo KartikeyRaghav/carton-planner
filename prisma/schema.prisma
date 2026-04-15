@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String
+  trialEndsAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subscription    Subscription?
+  devices         DeviceSession[]
+  calculations    Calculation[]
+  monoCartonCalcs MonoCartonCalculation[]
+  payments        Payment[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  plan       String // "trial" | "monthly" | "quarterly" | "yearly"
+  status     String // "active" | "expired" | "cancelled"
+  startDate  DateTime @default(now())
+  endDate    DateTime
+  maxDevices Int      @default(2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@map("subscriptions")
+}
+
+model DeviceSession {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  deviceId   String   @unique
+  deviceName String?
+  userAgent  String?
+  ipAddress  String?
+  lastActive DateTime @default(now())
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("device_sessions")
+}
+
+model Calculation {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  unit             String // "mm" | "inches"
+  cartonStyle      String
+  length           Float
+  width            Float
+  height           Float
+  pastingFlap      Float
+  tuckInFlap       Float
+  lockBottomMargin Float
+  results          Json // Array of sheet sizes
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("calculations")
+}
+
+model Payment {
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  subscriptionId    Int?
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount            Int // in paise
+  currency          String   @default("INR")
+  plan              String
+  extraDevices      Int      @default(0)
+  status            String // "created" | "paid" | "failed"
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@index([userId])
+  @@map("payments")
+}
+
+model Plan {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique // "monthly" | "quarterly" | "yearly"
+  displayName  String
+  durationDays Int
+  price        Int // in paise
+  maxDevices   Int      @default(2)
+  features     Json
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@map("plans")
+}
+
+model MonoCartonCalculation {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  packagingFormat String
+  inputs          Json
+  results         Json
+  grandTotal      Float
+  costPerUnit     Float
+  sheetCost       Float
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("mono_carton_calculations")
+}
