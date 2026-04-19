@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       "reset_password@modisoftech.org",
       email,
       "Reset Password Link for Printex",
-      "otp-template",
+      "reset-password-template",
       { link: resetLink },
     );
 
