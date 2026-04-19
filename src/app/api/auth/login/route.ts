@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       where: { email },
       include: {
         subscription: true,
-        devices: { where: { isActive: true } },
+        devices: {},
       },
     });
 
@@ -51,10 +51,9 @@ export async function POST(req: NextRequest) {
       null;
 
     // Try to find an existing inactive session from this same client
-    const inactiveSession = await prisma.deviceSession.findFirst({
+    const prevSession = await prisma.deviceSession.findFirst({
       where: {
         userId: user.id,
-        isActive: false,
         ...(userAgent ? { userAgent } : {}),
         ...(ipAddress ? { ipAddress } : {}),
       },
@@ -63,15 +62,15 @@ export async function POST(req: NextRequest) {
 
     let deviceId: string;
 
-    if (inactiveSession) {
+    if (prevSession) {
       // Reactivate the existing session — no new slot consumed
-      deviceId = inactiveSession.deviceId;
+      deviceId = prevSession.deviceId;
       await prisma.deviceSession.update({
-        where: { id: inactiveSession.id },
+        where: { id: prevSession.id },
         data: {
           isActive: true,
           lastActive: new Date(),
-          deviceName: deviceName || inactiveSession.deviceName || "Device",
+          deviceName: deviceName || prevSession.deviceName || "Device",
         },
       });
     } else {
