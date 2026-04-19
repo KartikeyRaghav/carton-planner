@@ -15,7 +15,7 @@ export default function HomePage() {
                   d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
             </div>
-            <span className="font-display font-700 text-lg text-surface-900">Carton Planner</span>
+            <span className="font-display font-700 text-lg text-surface-900">Printex</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/auth/login" className="btn-outline text-sm py-2 px-4">Sign In</Link>
@@ -107,7 +107,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-surface-100 px-6 py-8">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-surface-400">
-          <span>© 2024 Carton Planner. All rights reserved.</span>
+          <span>© 2024 Printex. All rights reserved.</span>
           <Link href="/pricing" className="hover:text-surface-600 transition-colors">Pricing</Link>
         </div>
       </footer>

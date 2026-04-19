@@ -3,7 +3,7 @@ import { AuthProvider } from '@/hooks/useAuth'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Carton Planner — Professional Sheet Size Calculator',
+  title: 'Printex — Professional Sheet Size Calculator',
   description: 'Precision carton die-cut layout planning for packaging professionals.',
 }
 

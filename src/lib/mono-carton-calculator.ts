@@ -15,6 +15,7 @@ export interface MonoCartonInputs {
   noOfColours: number;
 
   // Pantone Colour
+  includePantone: boolean;
   rateOfInk: number;
   noOfPantoneColours: number;
   printPerColour: number;
@@ -235,15 +236,23 @@ export function calculateMonoCarton(inp: MonoCartonInputs): MonoCartonResults {
     { label: "Printing", value: 0, isSectionHeader: true },
     { label: "Printing Rate", value: printingDetails },
     { label: "Printing Cost", value: printingCost },
-    { label: "Pantone", value: 0, isSectionHeader: true },
-    { label: "Ink Cost (Pantone)", value: inkCostPantone },
-    { label: "Printing Cost (Pantone)", value: printingCostPantone },
+    ...(inp.includePantone
+      ? [
+          { label: "Pantone", value: 0, isSectionHeader: true },
+          { label: "Ink Cost (Pantone)", value: inkCostPantone },
+          { label: "Printing Cost (Pantone)", value: printingCostPantone },
+        ]
+      : []),
     { label: "Coating", value: 0, isSectionHeader: true },
     { label: "Coating Rate", value: coatingRate },
     { label: "Coating Cost", value: coatingCost },
-    { label: "Mat Pack", value: 0, isSectionHeader: true },
-    { label: "Lamination Cost", value: laminationCost },
-    { label: "Total Cost", value: totalLaminationCost },
+    ...(inp.includeMatPack
+      ? [
+          { label: "Mat Pack", value: 0, isSectionHeader: true },
+          { label: "Lamination Cost", value: laminationCost },
+          { label: "Total Cost", value: totalLaminationCost },
+        ]
+      : []),
     {
       label: "Wastage",
       sublabel: `${inp.wastagePercent}%`,

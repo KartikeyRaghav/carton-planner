@@ -20,7 +20,7 @@ export default function CalculatorPage() {
 
   return (
     <AppLayout>
-      <div className="p-8 mx-auto">
+      <div className="p-8 lg:py-8 pt-20 mx-auto">
         {/* Header */}
         <div className="mb-8 animate-in">
           <h1 className="font-display font-700 text-2xl text-surface-900">
@@ -33,7 +33,7 @@ export default function CalculatorPage() {
 
         {/* Access blocked */}
         {!hasAccess && (
-          <div className="mb-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex items-center justify-between">
+          <div className="mb-6 p-3 sm:p-5 bg-red-50 border border-red-200 rounded-2xl flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
             <div>
               <p className="font-semibold text-red-800">
                 Trial expired — Calculator locked
@@ -236,12 +236,12 @@ export default function CalculatorPage() {
                   <h2 className="font-display font-700 text-lg text-surface-900">
                     Sheet Layouts — {form.cartonStyle}
                   </h2>
-                  <span className="badge badge-green">
+                  <span className="badge badge-green text-nowrap">
                     {results.length} options
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {results.map((layout, i) => (
                     <div
                       key={i}

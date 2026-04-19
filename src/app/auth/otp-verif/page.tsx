@@ -60,7 +60,7 @@ export default function OtpVerificationPageContent() {
             </svg>
           </div>
           <span className="font-display font-700 text-white text-lg">
-            Carton Planner
+            Printex
           </span>
         </Link>
         <div className="space-y-6">

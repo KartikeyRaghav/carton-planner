@@ -61,7 +61,7 @@ export default function PricingPage() {
 
   return (
     <AppLayout>
-      <div className="p-8 max-w-5xl">
+      <div className="p-4 sm:px-8 sm:py-8 pt-16 max-w-5xl">
         {/* Header */}
         <div className="mb-8 animate-in text-center">
           <h1 className="font-display font-700 text-3xl text-surface-900 mb-2">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
@@ -106,14 +107,49 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, subscriptionStatus, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Close on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  // Prevent body scroll when drawer is open on mobile
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleLogout = async () => {
     await logout();
     router.push("/auth/login");
   };
 
-  return (
-    <aside className="w-64 h-screen bg-white border-r border-surface-100 flex flex-col sticky top-0">
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
       <div className="px-5 py-5 border-b border-surface-100">
         <div className="flex items-center gap-2.5">
@@ -133,7 +169,7 @@ export default function Sidebar() {
             </svg>
           </div>
           <span className="font-display font-700 text-surface-900 text-sm">
-            Carton Planner
+            Printex
           </span>
         </div>
       </div>
@@ -234,6 +270,100 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── DESKTOP: static sidebar, visible on lg+ ── */}
+      <aside className="hidden lg:flex w-64 h-screen bg-white border-r border-surface-100 flex-col sticky top-0">
+        <SidebarContent />
+      </aside>
+
+      {/* ── MOBILE / TABLET: hamburger button in a top bar ── */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-white border-b border-surface-100 flex items-center px-4 gap-3">
+        <button
+          onClick={() => setIsOpen(true)}
+          aria-label="Open menu"
+          className="p-1.5 rounded-lg text-surface-600 hover:bg-surface-50 transition-colors"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+
+        {/* Logo in topbar */}
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center flex-shrink-0">
+            <svg
+              className="w-3.5 h-3.5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+          </div>
+          <span className="font-display font-700 text-surface-900 text-sm">
+            Printex
+          </span>
+        </div>
+      </div>
+
+      {/* ── MOBILE: backdrop ── */}
+      {isOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity"
+          aria-hidden="true"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* ── MOBILE: slide-in drawer ── */}
+      <div
+        ref={sidebarRef}
+        className={`lg:hidden fixed top-0 left-0 z-50 h-full w-72 bg-white shadow-xl flex flex-col transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Close button inside drawer */}
+        <button
+          onClick={() => setIsOpen(false)}
+          aria-label="Close menu"
+          className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-surface-400 hover:bg-surface-50 hover:text-surface-700 transition-colors"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        <SidebarContent />
+      </div>
+    </>
   );
 }

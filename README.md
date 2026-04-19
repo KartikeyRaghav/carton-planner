@@ -1,4 +1,4 @@
-# Carton Planner — Full-Stack SaaS Application
+# Printex — Full-Stack SaaS Application
 
 A production-ready SaaS carton sheet size calculator with authentication, subscriptions, device limiting, and Razorpay payment integration.
 

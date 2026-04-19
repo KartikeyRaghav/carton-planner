@@ -20,6 +20,7 @@ const DEFAULTS: MonoCartonInputs = {
   unitsPerSheet: 0,
   noOfPlates: 0,
   plateRate: 0,
+  includePantone: false,
   perColourCost: 0,
   noOfColours: 0,
   rateOfInk: 0,
@@ -133,8 +134,26 @@ function PrintReport({
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; color: #0f172a; background: #fff; padding: 32px; font-size: 13px; }
     h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    h2 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
     .sub { color: #64748b; font-size: 12px; margin-bottom: 24px; }
-    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 16px 0; }
+    .divider-light { border: none; border-top: 1px solid #f1f5f9; margin: 10px 0; }
+
+    /* Input sections */
+    .input-block { margin-bottom: 20px; }
+    .input-block-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #0c8ee8; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e0f0fd; }
+    .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px 16px; }
+    .input-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .input-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .input-item { display: flex; flex-direction: column; gap: 1px; }
+    .input-label { font-size: 10px; color: #94a3b8; font-weight: 500; }
+    .input-value { font-size: 12px; color: #1e293b; font-weight: 600; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-on { background: #d1fae5; color: #065f46; }
+    .badge-off { background: #f1f5f9; color: #94a3b8; }
+    .inline-inputs { display: flex; gap: 24px; flex-wrap: wrap; }
+
+    /* Results */
     .row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; }
     .row.sub-item { padding-left: 24px; color: #475569; }
     .row.section-header { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #0c8ee8; padding-top: 12px; padding-bottom: 2px; }
@@ -164,23 +183,356 @@ function PrintReport({
     <>
       {/* Hidden printable content */}
       <div ref={printRef} style={{ display: "none" }}>
-        <h1>Final Quotation</h1>
+        <h1>Mono Carton Quotation</h1>
         <p className="sub">
-          {calcId ? "Ref: " + String(calcId) : ""} --
+          {calcId ? "Ref: " + String(calcId) + "  ·  " : ""}
           {new Date().toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "short",
             year: "numeric",
           })}
         </p>
+
         <hr className="divider" />
-        {results.lineItems.map((item) =>
+
+        {/* ── INPUT SECTIONS ── */}
+        <h2>Input Data</h2>
+
+        {/* Sheet & Quantity */}
+        <div className="input-block">
+          <div className="input-block-title">
+            Sheet &amp; Quantity Specifications
+          </div>
+          <div className="input-grid">
+            <div className="input-item">
+              <span className="input-label">Length (in)</span>
+              <span className="input-value">{inputs.length}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Width (in)</span>
+              <span className="input-value">{inputs.width}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">GSM</span>
+              <span className="input-value">{inputs.gsm}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Paper Rate (₹/kg)</span>
+              <span className="input-value">{inputs.paperRate}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Sheet Qty</span>
+              <span className="input-value">{inputs.sheetQty}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Wastage (Shts)</span>
+              <span className="input-value">{inputs.wastageShts}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Box / Sheet</span>
+              <span className="input-value">{inputs.unitsPerSheet}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Plates & Normal Printing */}
+        <div className="input-block">
+          <div className="input-block-title">Plates &amp; Normal Printing</div>
+          <div className="input-grid">
+            <div className="input-item">
+              <span className="input-label">No. of Plates</span>
+              <span className="input-value">{inputs.noOfPlates}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Plate Rate (₹)</span>
+              <span className="input-value">{inputs.plateRate}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Per Colour Cost (₹/1000)</span>
+              <span className="input-value">{inputs.perColourCost}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">No. of Colours</span>
+              <span className="input-value">{inputs.noOfColours}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Pantone */}
+        <div className="input-block">
+          <div className="input-block-title">Pantone Colour</div>
+          <div className="input-grid cols-3">
+            <div className="input-item">
+              <span className="input-label">Rate of Ink (₹)</span>
+              <span className="input-value">{inputs.rateOfInk}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">No. of Colours</span>
+              <span className="input-value">{inputs.noOfPantoneColours}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Print Per Colour (₹/1000)</span>
+              <span className="input-value">{inputs.printPerColour}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Coating & Lamination */}
+        <div className="input-block">
+          <div className="input-block-title">
+            Coating, Lamination &amp; Wastage
+          </div>
+          <div className="input-grid">
+            <div className="input-item">
+              <span className="input-label">UV Coating</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.uvCoating ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.uvCoating ? "ON" : "OFF"}
+                </span>
+                {inputs.uvCoating && (
+                  <span
+                    style={{ marginLeft: 6, fontSize: 12, color: "#475569" }}
+                  >
+                    Rate: {inputs.uvCoatingRate}
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Drip Off</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.dripOff ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.dripOff ? "ON" : "OFF"}
+                </span>
+                {inputs.dripOff && (
+                  <span
+                    style={{ marginLeft: 6, fontSize: 12, color: "#475569" }}
+                  >
+                    Rate: {inputs.dripOffRate}
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Warnish</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.warnish ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.warnish ? "ON" : "OFF"}
+                </span>
+                {inputs.warnish && (
+                  <span
+                    style={{ marginLeft: 6, fontSize: 12, color: "#475569" }}
+                  >
+                    Rate: {inputs.warnishRate}
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Lamination</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.lamination ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.lamination ? "ON" : "OFF"}
+                </span>
+                {inputs.lamination && (
+                  <span
+                    style={{ marginLeft: 6, fontSize: 12, color: "#475569" }}
+                  >
+                    Rate: {inputs.laminationRate}
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Wastage (%)</span>
+              <span className="input-value">{inputs.wastagePercent}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Die Section */}
+        <div className="input-block">
+          <div className="input-block-title">Die Section</div>
+          <div className="input-grid cols-3">
+            <div className="input-item">
+              <span className="input-label">Die Cost (₹)</span>
+              <span className="input-value">{inputs.dieCost}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Die Setting (₹)</span>
+              <span className="input-value">{inputs.dieSetting}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Die Cutting (₹/1000)</span>
+              <span className="input-value">{inputs.dieCutting}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Mat Pack, Embossing, Leafing */}
+        <div className="input-block">
+          <div className="input-block-title">
+            Mat Pack / Embossing / Leafing
+          </div>
+          <div className="input-grid">
+            <div className="input-item">
+              <span className="input-label">Mat Pack</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.includeMatPack ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.includeMatPack ? "ON" : "OFF"}
+                </span>
+              </span>
+            </div>
+            {inputs.includeMatPack && (
+              <>
+                <div className="input-item">
+                  <span className="input-label">Mat Pack Lamination Rate</span>
+                  <span className="input-value">
+                    {inputs.matPackLaminationRate}
+                  </span>
+                </div>
+                <div className="input-item">
+                  <span className="input-label">Mat Pack Wastage</span>
+                  <span className="input-value">{inputs.matPackWastage}</span>
+                </div>
+              </>
+            )}
+            <div className="input-item">
+              <span className="input-label">Embossing</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.includeEmbossing ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.includeEmbossing ? "ON" : "OFF"}
+                </span>
+              </span>
+            </div>
+            {inputs.includeEmbossing && (
+              <>
+                <div className="input-item">
+                  <span className="input-label">Embossing Block Cost (₹)</span>
+                  <span className="input-value">
+                    {inputs.embossingBlockCost}
+                  </span>
+                </div>
+                <div className="input-item">
+                  <span className="input-label">Embossing Per Box (₹)</span>
+                  <span className="input-value">
+                    {inputs.embossingPerBoxCost}
+                  </span>
+                </div>
+              </>
+            )}
+            <div className="input-item">
+              <span className="input-label">Leafing</span>
+              <span className="input-value">
+                <span
+                  className={`badge ${inputs.includeLeafing ? "badge-on" : "badge-off"}`}
+                >
+                  {inputs.includeLeafing ? "ON" : "OFF"}
+                </span>
+              </span>
+            </div>
+            {inputs.includeLeafing && (
+              <>
+                <div className="input-item">
+                  <span className="input-label">Leafing Block Cost (₹)</span>
+                  <span className="input-value">{inputs.leafingBlockCost}</span>
+                </div>
+                <div className="input-item">
+                  <span className="input-label">Leafing Per Box (₹)</span>
+                  <span className="input-value">
+                    {inputs.leafingPerBoxCost}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Pasting */}
+        <div className="input-block">
+          <div className="input-block-title">Pasting</div>
+          <div className="input-grid">
+            <div className="input-item">
+              <span className="input-label">Stipping (₹/1000)</span>
+              <span className="input-value">{inputs.stipping}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Shorting (₹/1000)</span>
+              <span className="input-value">{inputs.shorting}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Side Pasting (₹/1000)</span>
+              <span className="input-value">{inputs.sidePasting}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Lock Bottom (₹/1000)</span>
+              <span className="input-value">{inputs.lockBottom}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Packaging */}
+        <div className="input-block">
+          <div className="input-block-title">Packaging</div>
+          <div className="input-grid cols-3">
+            <div className="input-item">
+              <span className="input-label">No. of Pkt</span>
+              <span className="input-value">{inputs.noOfPkt}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Bag Rate (₹/pkt)</span>
+              <span className="input-value">{inputs.bagRate}</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Box Rate (₹/pkt)</span>
+              <span className="input-value">{inputs.boxRate}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Margins */}
+        <div className="input-block">
+          <div className="input-block-title">Margins &amp; Overheads</div>
+          <div className="input-grid cols-2">
+            <div className="input-item">
+              <span className="input-label">CC &amp; PC Charges (%)</span>
+              <span className="input-value">{inputs.ccPcChargesPercent}%</span>
+            </div>
+            <div className="input-item">
+              <span className="input-label">Margin (%)</span>
+              <span className="input-value">{inputs.marginPercent}%</span>
+            </div>
+          </div>
+        </div>
+
+        <hr className="divider" />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        {/* ── RESULTS ── */}
+        <h2>Final Quotation</h2>
+
+        {results.lineItems.map((item, i) =>
           item.isSectionHeader ? (
-            <div className="row section-header">
+            <div key={i} className="row section-header">
               <span>{item.label}</span>
             </div>
           ) : (
-            <div className={`row${item.isSubItem ? " sub-item" : ""}`}>
+            <div key={i} className={`row${item.isSubItem ? " sub-item" : ""}`}>
               <span>
                 {item.label}
                 {item.sublabel ? (
@@ -193,11 +545,18 @@ function PrintReport({
             </div>
           ),
         )}
+
         <hr className="divider" />
         <div className="row">
           <span>Total Sub-Cost</span>
           <span>
             <strong>{fmt(results.subTotal)}</strong>
+          </span>
+        </div>
+        <div className="row">
+          <span>No. of Boxes</span>
+          <span>
+            {results.totalUnits}
           </span>
         </div>
         <div className="row">
@@ -212,16 +571,18 @@ function PrintReport({
           <span>Grand Total</span>
           <span>{fmt(results.grandTotal)}</span>
         </div>
+
         <div className="summary">
           <div className="summary-card">
             <div className="s-label">Sheet Cost</div>
             <div className="s-value">{fmt(results.sheetCost)}</div>
           </div>
           <div className="summary-card">
-            <div className="s-label">Cost per {"Box"}</div>
+            <div className="s-label">Cost per Box</div>
             <div className="s-value">{fmt(results.costPerUnit)}</div>
           </div>
         </div>
+
         <div className="meta">
           Generated by Carton Planner · {new Date().toLocaleString("en-IN")}
         </div>
@@ -264,7 +625,7 @@ function Report({
 }) {
   return (
     <div className="space-y-4">
-      <div className="card p-6">
+      <div className="card p-3 sm:p-6">
         <h2 className="font-display font-700 text-xl text-surface-900 text-center mb-1">
           Final Quotation
         </h2>
@@ -312,6 +673,10 @@ function Report({
           <div className="flex justify-between text-sm font-semibold text-surface-800">
             <span>Total Sub-Cost</span>
             <span className="font-mono">{fmt(results.subTotal)}</span>
+          </div>
+          <div className="flex justify-between text-sm text-surface-800">
+            <span>No. of Boxes</span>
+            <span className="font-mono">{results.totalUnits}</span>
           </div>
           <div className="flex justify-between text-sm text-surface-500">
             <span>CC &amp; PC Charges ({inputs.ccPcChargesPercent}%)</span>
@@ -439,9 +804,9 @@ export default function MonoCartonPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 max-w-6xl">
+      <div className="p-3 sm:px-6 lg:py-8 pt-20 max-w-6xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
           <div>
             <h1 className="font-display font-700 text-2xl text-surface-900">
               Mono Carton Pro
@@ -586,22 +951,36 @@ export default function MonoCartonPage() {
 
             {/* Pantone */}
             <Section title="Pantone Colour">
+              <label className="flex items-center gap-2.5 mb-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.includePantone}
+                  onChange={(e) => set("includePantone", e.target.checked)}
+                  className="w-4 h-4 accent-brand-500"
+                />
+                <span className="text-sm font-semibold text-surface-700">
+                  Include Pantone
+                </span>
+              </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <Field
                   label="Rate of Ink (₹)"
                   value={form.rateOfInk}
                   onChange={(v) => set("rateOfInk", v)}
+                  disabled={!form.includePantone}
                 />
                 <Field
                   label="No. of Colours"
                   value={form.noOfPantoneColours}
                   onChange={(v) => set("noOfPantoneColours", v)}
                   step="1"
+                  disabled={!form.includePantone}
                 />
                 <Field
                   label="Print Per Colour (₹/1000)"
                   value={form.printPerColour}
                   onChange={(v) => set("printPerColour", v)}
+                  disabled={!form.includePantone}
                 />
               </div>
             </Section>

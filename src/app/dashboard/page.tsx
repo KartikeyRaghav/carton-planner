@@ -6,6 +6,7 @@ import Link from "next/link";
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Calculation, DeviceSession } from "@/types";
+import { ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, subscriptionStatus, isLoading, isAuthenticated } = useAuth();
@@ -85,7 +86,7 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="p-8">
+      <div className="p-8 pt-20 lg:py-8">
         {/* Header */}
         <div className="mb-8 animate-in">
           <h1 className="font-display font-700 text-2xl text-surface-900">
@@ -203,7 +204,7 @@ export default function DashboardPage() {
 
         {/* No access banner */}
         {!subscriptionStatus?.hasAccess && (
-          <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between animate-in">
+          <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row gap-4 items-center justify-between animate-in">
             <div>
               <p className="font-semibold text-amber-800">
                 Your free trial has expired
@@ -223,16 +224,16 @@ export default function DashboardPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Recent Calculations */}
-          <div className="card p-5 animate-in stagger-2">
+          <div className="card p-3 sm:p-5 animate-in stagger-2">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-display font-700 text-lg text-surface-900">
                 Recent Calculations
               </h2>
               <Link
                 href="/history"
-                className="text-brand-500 text-sm hover:underline"
+                className="text-brand-500 text-sm hover:underline flex items-center gap-1 text-right"
               >
-                View all →
+                View all <ArrowRight size={12} />
               </Link>
             </div>
 
@@ -281,7 +282,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Active Devices */}
-          <div className="card p-5 animate-in stagger-3" id="devices">
+          <div className="card p-3 sm:p-5 animate-in stagger-3" id="devices">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-display font-700 text-lg text-surface-900">
                 Active Devices

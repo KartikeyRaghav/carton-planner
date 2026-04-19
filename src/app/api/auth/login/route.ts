@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       // Brand-new device — check limit
       if (activeDevices.length >= maxDevices) {
         return apiError(
-          `Device limit reached (${activeDevices.length}/${maxDevices}). Please log out from another device or purchase an extra device slot.`,
+          `Device limit reached (${activeDevices.length}/${maxDevices}). Purchase an extra device slot.`,
           403,
           {
             deviceLimitExceeded: true,
