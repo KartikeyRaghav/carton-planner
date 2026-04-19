@@ -43,7 +43,8 @@ export async function POST(req: NextRequest) {
       "reset_password@modisoftech.org",
       email,
       "Reset Password Link for Printex",
-      `Dear user,\n\nYour reset password link is ${resetLink}.\n\nThis link is valid for 15 minutes only.`,
+      "otp-template",
+      { link: resetLink },
     );
 
     const response = apiSuccess({ token });

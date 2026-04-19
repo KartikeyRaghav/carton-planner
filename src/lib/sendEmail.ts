@@ -16,7 +16,8 @@ export const sendEmail = async (
   from: string,
   to: string,
   subject: string,
-  text: string,
+  template_id: string,
+  variables: any,
 ) => {
   try {
     // const info = await transporter.sendMail({
@@ -27,10 +28,9 @@ export const sendEmail = async (
     // });
     resend.emails.send({
       from,
-      // template: { id: template },
       to,
       subject,
-      text,
+      template: { id: template_id, variables },
     });
   } catch (error) {
     console.error("Error sending email:", error);
