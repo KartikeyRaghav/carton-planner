@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       process.env.NEXT_PUBLIC_APP_URL + "/auth/reset-password?token=" + token;
 
     await sendEmail(
+      "reset_password@modisoftech.org",
       email,
       "Reset Password Link for Printex",
       `Dear user,\n\nYour reset password link is ${resetLink}.\n\nThis link is valid for 15 minutes only.`,

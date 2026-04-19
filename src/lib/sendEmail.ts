@@ -12,7 +12,12 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const sendEmail = async (to: string, subject: string, text: string) => {
+export const sendEmail = async (
+  from: string,
+  to: string,
+  subject: string,
+  text: string,
+) => {
   try {
     // const info = await transporter.sendMail({
     //   from: '"Printex" modisoftech@gmail.com',
@@ -21,7 +26,7 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     //   text,
     // });
     resend.emails.send({
-      from: "modisoftech@gmail.com",
+      from,
       // template: { id: template },
       to,
       subject,

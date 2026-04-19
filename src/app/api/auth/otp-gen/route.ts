@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     });
 
     await sendEmail(
+      "otp@modisoftech.org",
       email,
       "OTP for Printex Signup",
       `Dear user,\n\nYour otp for signup is ${otp}.\n\nThis otp is valid for 15 minutes only.`,
