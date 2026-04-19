@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
     }
 
     const results = calculateMonoCarton(parsed.data);
-    console.log(results);
     const record = await prisma.monoCartonCalculation.create({
       data: {
         userId: Number(userId),
@@ -88,7 +87,6 @@ export async function POST(req: NextRequest) {
         sheetCost: results.sheetCost,
       },
     });
-    console.log(record);
 
     // Update device last_active
     const deviceId = req.headers.get("x-device-id");

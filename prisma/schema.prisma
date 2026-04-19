@@ -12,7 +12,7 @@ model User {
   email        String   @unique
   name         String
   passwordHash String
-  mobile       String
+  mobile       String   @default("1234567890")
   trialEndsAt  DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

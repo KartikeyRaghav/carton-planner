@@ -25,14 +25,13 @@ export async function POST(req: NextRequest) {
       where: { id: Number(userId) },
     });
     if (!user) return apiError("User not found", 404);
-    console.log("Here 1");
+    ("Here 1");
     const order = await razorpay.orders.create({
       amount: pricing.amount,
       currency: "INR",
       receipt: `sub_${userId}_${Date.now()}`,
       notes: { userId, plan },
     });
-    console.log("Here 2");
 
     await prisma.payment.create({
       data: {
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
         status: "created",
       },
     });
-    console.log("Here 3");
 
     return apiSuccess({
       orderId: order.id,
