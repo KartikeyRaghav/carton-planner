@@ -34,7 +34,6 @@ const inputSchema = z.object({
   warnishRate: z.number().min(0),
   lamination: z.boolean(),
   laminationRate: z.number().min(0),
-  wastagePercent: z.number().min(0),
   dieCost: z.number().min(0),
   dieSetting: z.number().min(0),
   dieCutting: z.number().min(0),

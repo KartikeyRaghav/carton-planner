@@ -29,7 +29,6 @@ export interface MonoCartonInputs {
   warnishRate: number;
   lamination: boolean;
   laminationRate: number;
-  wastagePercent: number;
 
   // Die Section
   dieCost: number;
@@ -255,7 +254,6 @@ export function calculateMonoCarton(inp: MonoCartonInputs): MonoCartonResults {
       : []),
     {
       label: "Wastage",
-      sublabel: `${inp.wastagePercent}%`,
       value: wastageCost,
     },
     { label: "Die Section Total", value: dieCost },
