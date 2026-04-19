@@ -23,6 +23,7 @@ const inputSchema = z.object({
   perColourCost: z.number().min(0),
   noOfColours: z.number().min(0),
   rateOfInk: z.number().min(0),
+  includePantone: z.boolean(),
   noOfPantoneColours: z.number().min(0),
   printPerColour: z.number().min(0),
   uvCoating: z.boolean(),
