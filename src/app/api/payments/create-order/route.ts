@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (!user) return apiError("User not found", 404);
     ("Here 1");
     const order = await razorpay.orders.create({
-      amount: pricing.amount,
+      amount: (pricing.amount * 118) / 100,
       currency: "INR",
       receipt: `sub_${userId}_${Date.now()}`,
       notes: { userId, plan },
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: Number(userId),
         razorpayOrderId: order.id,
-        amount: pricing.amount,
+        amount: (pricing.amount * 118) / 100,
         plan,
         status: "created",
       },

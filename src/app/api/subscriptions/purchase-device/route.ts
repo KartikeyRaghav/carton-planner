@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     const order = await razorpay.orders.create({
-      amount: EXTRA_DEVICE_PRICE,
+      amount: (EXTRA_DEVICE_PRICE * 118) / 100,
       currency: "INR",
       receipt: `device_${userId}_${Date.now()}`,
       notes: { userId, type: "extra_device" },
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         userId: Number(userId),
         subscriptionId: user.subscription.id,
         razorpayOrderId: order.id,
-        amount: EXTRA_DEVICE_PRICE,
+        amount: (EXTRA_DEVICE_PRICE * 118) / 100,
         plan: "extra_device",
         extraDevices: 1,
         status: "created",
