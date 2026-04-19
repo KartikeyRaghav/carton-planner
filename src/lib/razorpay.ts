@@ -43,6 +43,6 @@ export const PLAN_PRICES: PlanPricing = {
 };
 
 export const EXTRA_DEVICE_PRICE = parseInt(
-  process.env.EXTRA_DEVICE_PRICE || "24900",
+  process.env.EXTRA_DEVICE_PRICE || "74900",
   10,
 );
