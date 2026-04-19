@@ -104,3 +104,23 @@ export async function GET(req: NextRequest) {
     return apiError("Internal server error", 500);
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const userId = req.headers.get("x-user-id");
+    if (!userId) return apiUnauthorized();
+
+    const { searchParams } = new URL(req.url);
+    if (!searchParams.get("id")) return apiError("ID not found");
+    const id = parseInt(searchParams.get("id")!);
+
+    await prisma.calculation.delete({
+      where: { userId: Number(userId), id: id },
+    });
+
+    return apiSuccess({ message: "Deleted" });
+  } catch (error) {
+    console.error("Get calculations error:", error);
+    return apiError("Internal server error", 500);
+  }
+}

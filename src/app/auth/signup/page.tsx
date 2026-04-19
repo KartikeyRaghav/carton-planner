@@ -12,6 +12,7 @@ export default function SignupPage() {
     name: "",
     email: "",
     password: "",
+    mobile: "",
     confirm: "",
   });
   const [error, setError] = useState("");
@@ -81,7 +82,7 @@ export default function SignupPage() {
           </h2>
           <div className="space-y-3">
             {[
-              "✓ 1-day free trial, no card required",
+              "✓ 7-day free trial, no card required",
               "✓ All carton styles supported",
               "✓ Full calculation history",
               "✓ Up to 2 devices per account",
@@ -142,6 +143,22 @@ export default function SignupPage() {
                 }
                 required
                 autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="label">Mobile Number</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="97112XXXXX"
+                maxLength={10}
+                minLength={10}
+                value={form.mobile}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, mobile: e.target.value }))
+                }
+                required
+                autoComplete="mobile"
               />
             </div>
             <div>

@@ -86,7 +86,7 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="p-8 pt-20 lg:py-8">
+      <div className="p-4 sm:px-8 pt-20 lg:py-8">
         {/* Header */}
         <div className="mb-8 animate-in">
           <h1 className="font-display font-700 text-2xl text-surface-900">

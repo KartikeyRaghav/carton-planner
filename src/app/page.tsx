@@ -50,7 +50,7 @@ export default function HomePage() {
       <section className="max-w-6xl mx-auto px-6 pt-24 pb-16 text-center">
         <div className="badge badge-blue mb-6 text-sm px-4 py-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
-          Free 1-day trial — No credit card required
+          Free 7-day trial — No credit card required
         </div>
         <h1 className="font-display text-5xl md:text-7xl font-800 text-surface-900 mb-6 leading-tight tracking-tight">
           Precision Carton
@@ -129,7 +129,7 @@ export default function HomePage() {
             Ready to plan smarter?
           </h2>
           <p className="text-brand-100 mb-8 text-lg">
-            Start your free 1-day trial — no credit card needed.
+            Start your free 7-day trial — no credit card needed.
           </p>
           <Link
             href="/auth/signup"

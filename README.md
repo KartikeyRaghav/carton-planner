@@ -189,7 +189,7 @@ The webhook provides redundancy — if the user closes the browser before verifi
 
 ### Authentication
 
-- **Signup**: Creates user with 1-day trial, issues JWT cookie
+- **Signup**: Creates user with 7-day trial, issues JWT cookie
 - **Login**: Validates password, checks device limit, creates device session
 - **JWT**: Stored in httpOnly cookie (`auth_token`) and optionally localStorage
 - **Middleware**: Verifies JWT on all protected routes before hitting handlers

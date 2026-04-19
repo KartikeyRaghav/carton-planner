@@ -20,11 +20,11 @@ export default function CalculatorPage() {
 
   return (
     <AppLayout>
-      <div className="p-8 lg:py-8 pt-20 mx-auto">
+      <div className="p-4 sm:px-4 lg:py-8 pt-20 mx-auto">
         {/* Header */}
         <div className="mb-8 animate-in">
           <h1 className="font-display font-700 text-2xl text-surface-900">
-            Carton Calculator
+            Sheet Size Calculator
           </h1>
           <p className="text-surface-500 mt-1">
             Enter carton dimensions to calculate possible sheet sizes.
@@ -53,7 +53,7 @@ export default function CalculatorPage() {
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Form */}
-          <div className="lg:col-span-1 card p-6 animate-in stagger-1 h-fit">
+          <div className="lg:col-span-1 card p-3 sm:p-6 animate-in stagger-1 h-fit">
             <h2 className="font-display font-600 text-lg text-surface-900 mb-5">
               Input Parameters
             </h2>

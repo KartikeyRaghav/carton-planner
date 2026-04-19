@@ -61,7 +61,7 @@ export default function PricingPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:px-8 sm:py-8 pt-16 max-w-5xl">
+      <div className="p-4 sm:px-8 sm:py-8 pt-16 max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8 animate-in text-center">
           <h1 className="font-display font-700 text-3xl text-surface-900 mb-2">
@@ -89,7 +89,7 @@ export default function PricingPage() {
         )}
 
         {/* Plans grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-10 animate-in stagger-1">
+        <div className="grid md:grid-cols-2 gap-6 mb-10 animate-in stagger-1">
           {plans.map(plan => {
             const isHighlighted = planHighlight[plan.name]
             const isCurrentPlan = subscriptionStatus?.isSubscribed &&

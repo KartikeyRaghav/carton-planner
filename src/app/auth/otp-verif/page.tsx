@@ -27,7 +27,7 @@ export default function OtpVerificationPageContent() {
     try {
       await otpVerify(form.otp);
       const data = JSON.parse(localStorage.getItem("signup_form") || "");
-      await signup(data.name, data.email, data.password);
+      await signup(data.name, data.email, data.password, data.mobile);
       router.replace("/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -71,7 +71,7 @@ export default function OtpVerificationPageContent() {
           </h2>
           <div className="space-y-3">
             {[
-              "✓ 1-day free trial, no card required",
+              "✓ 7-day free trial, no card required",
               "✓ All carton styles supported",
               "✓ Full calculation history",
               "✓ Up to 2 devices per account",

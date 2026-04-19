@@ -25,20 +25,12 @@ export interface CartonRateForm {
 const sheetSizeForm: SheetSizeForm = {
   unit: "mm",
   cartonStyle: "Self Lock",
-  length: "",
-  width: "",
-  height: "",
-  pastingFlap: "",
-  tuckInFlap: "",
-  lockBottomMargin: "",
-};
-
-const cartonRateForm: CartonRateForm = {
-  length: "",
-  width: "",
-  height: "",
-  gsm: "",
-  rate: "",
+  length: "118",
+  width: "72",
+  height: "72",
+  pastingFlap: "10",
+  tuckInFlap: "10",
+  lockBottomMargin: "12",
 };
 
 export function useSheetSizeCalculator() {

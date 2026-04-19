@@ -11,32 +11,32 @@ import {
 } from "@/lib/mono-carton-calculator";
 
 const DEFAULTS: MonoCartonInputs = {
-  length: 0,
-  width: 0,
-  gsm: 0,
-  paperRate: 0,
-  sheetQty: 0,
-  wastageShts: 0,
-  unitsPerSheet: 0,
-  noOfPlates: 0,
-  plateRate: 0,
+  length: 18,
+  width: 25,
+  gsm: 280,
+  paperRate: 85,
+  sheetQty: 1100,
+  wastageShts: 50,
+  unitsPerSheet: 6,
+  noOfPlates: 5,
+  plateRate: 225,
+  perColourCost: 4,
+  noOfColours: 225,
   includePantone: false,
-  perColourCost: 0,
-  noOfColours: 0,
   rateOfInk: 0,
   noOfPantoneColours: 0,
   printPerColour: 0,
   uvCoating: false,
   uvCoatingRate: 0,
-  dripOff: false,
-  dripOffRate: 0,
+  dripOff: true,
+  dripOffRate: 2,
   warnish: false,
   warnishRate: 0,
   lamination: false,
   laminationRate: 0,
-  dieCost: 0,
-  dieSetting: 0,
-  dieCutting: 0,
+  dieCost: 1200,
+  dieSetting: 300,
+  dieCutting: 250,
   includeEmbossing: false,
   embossingBlockCost: 0,
   embossingPerBoxCost: 0,
@@ -46,15 +46,15 @@ const DEFAULTS: MonoCartonInputs = {
   includeLeafing: false,
   leafingBlockCost: 0,
   leafingPerBoxCost: 0,
-  stipping: 0,
-  shorting: 0,
-  sidePasting: 0,
+  stipping: 25,
+  shorting: 25,
+  sidePasting: 45,
   lockBottom: 0,
-  noOfPkt: 0,
-  bagRate: 0,
+  noOfPkt: 4,
+  bagRate: 25,
   boxRate: 0,
-  ccPcChargesPercent: 0,
-  marginPercent: 0,
+  ccPcChargesPercent: 5,
+  marginPercent: 10,
 };
 
 function Field({
@@ -96,7 +96,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="card p-5">
+    <div className="card p-3 sm:p-5">
       <h3 className="text-xs font-bold uppercase tracking-widest text-surface-500 mb-4">
         {title}
       </h3>
@@ -128,7 +128,7 @@ function PrintReport({
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>Mono Carton Quotation${calcId ? " #" + String(calcId) : ""}</title>
+  <title>Mono Carton Rate Quotation${calcId ? " #" + String(calcId) : ""}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; color: #0f172a; background: #fff; padding: 32px; font-size: 13px; }
@@ -182,7 +182,7 @@ function PrintReport({
     <>
       {/* Hidden printable content */}
       <div ref={printRef} style={{ display: "none" }}>
-        <h1>Mono Carton Quotation</h1>
+        <h1>Mono Carton Rate Quotation</h1>
         <p className="sub">
           {calcId ? "Ref: " + String(calcId) + "  ·  " : ""}
           {new Date().toLocaleDateString("en-IN", {
@@ -800,7 +800,7 @@ export default function MonoCartonPage() {
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
           <div>
             <h1 className="font-display font-700 text-2xl text-surface-900">
-              Mono Carton Pro
+              Mono Carton Rate
             </h1>
             <p className="text-surface-500 text-sm mt-0.5">
               Full cost quotation calculator for mono carton packaging

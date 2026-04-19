@@ -130,7 +130,7 @@ export default function HistoryPage() {
                 : "text-surface-500 hover:text-surface-700"
             }`}
           >
-            📐 Sheet Calculator
+            📐 Sheet Size Calculator
             {sheetPagination.total > 0 && (
               <span className="ml-2 badge badge-blue">
                 {sheetPagination.total}
@@ -145,7 +145,7 @@ export default function HistoryPage() {
                 : "text-surface-500 hover:text-surface-700"
             }`}
           >
-            💰 Mono Carton Pro
+            💰 Mono Carton Rate
             {monoPagination.total > 0 && (
               <span className="ml-2 badge badge-blue">
                 {monoPagination.total}
@@ -170,10 +170,10 @@ export default function HistoryPage() {
               <div className="card p-8 sm:p-16 text-center">
                 <div className="text-5xl mb-4">📐</div>
                 <h3 className="font-display font-600 text-xl text-surface-700 mb-2">
-                  No sheet calculations yet
+                  No sheet size calculations yet
                 </h3>
                 <p className="text-surface-400 text-sm">
-                  Use the Sheet Calculator to get started.
+                  Use the Sheet Size Calculator to get started.
                 </p>
               </div>
             ) : (
@@ -328,10 +328,10 @@ export default function HistoryPage() {
               <div className="card p-8 sm:p-16 text-center">
                 <div className="text-5xl mb-4">💰</div>
                 <h3 className="font-display font-600 text-xl text-surface-700 mb-2">
-                  No Mono Carton calculations yet
+                  No Mono Carton Rate calculations yet
                 </h3>
                 <p className="text-surface-400 text-sm">
-                  Use the Mono Carton Pro calculator to get started.
+                  Use the Mono Carton Rate calculator to get started.
                 </p>
               </div>
             ) : (

@@ -10,6 +10,7 @@ const signupSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   password: z.string().min(8),
+  mobile: z.string().length(10),
 });
 
 export async function POST(req: NextRequest) {
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
       return apiError("Validation failed", 400, parsed.error.flatten());
     }
 
-    const { name, email, password } = parsed.data;
+    const { name, email, password, mobile } = parsed.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12);
 
     const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 1); // 1-day free trial
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7); // 7-day free trial
 
     const deviceId = uuidv4();
     // Prisma string fields don't accept undefined — use null instead
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
         name,
         email,
         passwordHash,
+        mobile,
         trialEndsAt,
         devices: {
           create: {

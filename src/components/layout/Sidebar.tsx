@@ -27,7 +27,7 @@ const navItems = [
   },
   {
     href: "/calculator",
-    label: "Sheet Calculator",
+    label: "Sheet Size Calculator",
     icon: (
       <svg
         className="w-5 h-5"
@@ -46,7 +46,7 @@ const navItems = [
   },
   {
     href: "/mono-carton",
-    label: "Mono Carton Pro",
+    label: "Mono Carton Rate",
     icon: (
       <svg
         className="w-5 h-5"
