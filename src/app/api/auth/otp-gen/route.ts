@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       email,
       "Your OTP Code for Signup Verification",
       "otp-template",
-      { otp_code: otp },
+      { OTP_CODE: otp },
     );
 
     const response = apiSuccess({ message: "ok" });

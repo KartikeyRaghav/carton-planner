@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       email,
       "Reset Password Link for Printex",
       "reset-password-template",
-      { link: resetLink },
+      { Link: resetLink },
     );
 
     const response = apiSuccess({ token });
