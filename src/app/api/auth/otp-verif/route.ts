@@ -19,15 +19,15 @@ export async function POST(req: NextRequest) {
 
     const { otp } = parsed.data;
 
-    const token = req.cookies.get("otp_token")?.value;
+    const token_id = req.cookies.get("otp_token_id")?.value;
 
-    if (!token) {
+    if (!token_id) {
       return apiError("Otp Token not found", 401);
     }
 
     const otpRecord = await prisma.otpVerification.findFirstOrThrow({
       where: {
-        token: token,
+        id: Number(token_id),
       },
       orderBy: {
         expiresAt: "desc",
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       return apiError("OTP has expired", 400);
     }
 
-    const payload = await verifyOtpToken(token);
+    const payload = await verifyOtpToken(otpRecord.token);
 
     if (payload?.otp != Number(otp)) {
       return apiError("Wrong OTP Entered", 400);
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     });
 
     const response = apiSuccess({ message: "Email verified" });
-    response.cookies.delete("otp_token");
+    response.cookies.delete("otp_token_id");
 
     return response;
   } catch (error) {

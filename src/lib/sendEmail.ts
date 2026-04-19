@@ -21,7 +21,8 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     //   text,
     // });
     resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: "modisoftech@gmail.com",
+      // template: { id: template },
       to,
       subject,
       text,

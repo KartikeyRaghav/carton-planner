@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
     });
 
     const response = apiSuccess({ message: "Password updated successfully" });
-    response.cookies.delete("reset_password_token");
 
     return response;
   } catch (error) {

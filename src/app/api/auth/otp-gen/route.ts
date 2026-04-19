@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     const token = otpToken(email, otp);
 
-    await prisma.otpVerification.create({
+    const otp_recored = await prisma.otpVerification.create({
       data: {
         token: token,
         expiresAt: expiresAt,
@@ -39,11 +39,11 @@ export async function POST(req: NextRequest) {
     );
 
     const response = apiSuccess({ message: "ok" });
-    response.cookies.set("otp_token", token, {
+    response.cookies.set("otp_token_id", String(otp_recored.id), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 15, // 7 days
+      maxAge: 60 * 60 * 15,
       path: "/",
     });
 
