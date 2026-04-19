@@ -20,6 +20,11 @@ export async function POST(req: NextRequest) {
 
     const { email } = parsed.data;
 
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return apiError("Email already in use", 409);
+    }
+
     const otp = Math.trunc(100000 + Math.random() * 900000);
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
