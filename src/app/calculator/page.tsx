@@ -4,6 +4,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useSheetSizeCalculator } from "@/hooks/useCalculator";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const CARTON_STYLES = ["Self Lock", "Both Side Tuck"] as const;
 const UNITS = [
@@ -13,10 +14,27 @@ const UNITS = [
 
 export default function CalculatorPage() {
   const { subscriptionStatus } = useAuth();
-  const { form, results, isLoading, error, updateField, calculate, reset } =
-    useSheetSizeCalculator();
+  const {
+    form,
+    setForm,
+    results,
+    isLoading,
+    error,
+    updateField,
+    calculate,
+    reset,
+  } = useSheetSizeCalculator();
 
   const hasAccess = subscriptionStatus?.hasAccess ?? true;
+
+  useEffect(() => {
+    const parser = localStorage.getItem("sheetSizeCalculator") || "{}";
+    const prevForm = JSON.parse(parser);
+    if (parser != "{}") {
+      console.log(form);
+      setForm(prevForm);
+    }
+  }, []);
 
   return (
     <AppLayout>

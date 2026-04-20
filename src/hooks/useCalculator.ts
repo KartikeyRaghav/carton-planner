@@ -30,7 +30,7 @@ const sheetSizeForm: SheetSizeForm = {
   height: "72",
   pastingFlap: "10",
   tuckInFlap: "10",
-  lockBottomMargin: "12",
+  lockBottomMargin: "10",
 };
 
 export function useSheetSizeCalculator() {
@@ -67,6 +67,8 @@ export function useSheetSizeCalculator() {
       setError("Please fill in all fields");
       return;
     }
+
+    localStorage.setItem("sheetSizeCalculator", JSON.stringify(form));
 
     const payload = {
       unit,
@@ -120,5 +122,14 @@ export function useSheetSizeCalculator() {
     setError(null);
   };
 
-  return { form, results, isLoading, error, updateField, calculate, reset };
+  return {
+    form,
+    setForm,
+    results,
+    isLoading,
+    error,
+    updateField,
+    calculate,
+    reset,
+  };
 }

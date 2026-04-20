@@ -333,6 +333,7 @@ export default function HistoryPage() {
             ) : (
               <div className="space-y-3 animate-in">
                 {monoCalcs.map((calc, i) => {
+                  console.log(calc);
                   const isOpen = monoExpanded === calc.id;
                   const lineItems: any[] = calc.results?.lineItems ?? [];
                   return (
@@ -400,7 +401,7 @@ export default function HistoryPage() {
 
                       {isOpen && (
                         <div className="border-t border-surface-100 px-5 py-4 bg-surface-50">
-                          <div className="grid sm:grid-cols-3 gap-3 mb-4">
+                          <div className="grid sm:grid-cols-4 gap-3 mb-4">
                             <div className="bg-white rounded-xl p-3 border border-surface-100 text-center">
                               <p className="text-xs text-surface-400 mb-1">
                                 Grand Total
@@ -423,6 +424,14 @@ export default function HistoryPage() {
                               </p>
                               <p className="font-display font-700 text-lg text-surface-800">
                                 {fmt(calc.costPerUnit)}
+                              </p>
+                            </div>
+                            <div className="bg-white rounded-xl p-3 border border-surface-100 text-center">
+                              <p className="text-xs text-surface-400 mb-1">
+                                No. of Boxes
+                              </p>
+                              <p className="font-display font-700 text-lg text-surface-800">
+                                {(calc.results.totalUnits)}
                               </p>
                             </div>
                           </div>

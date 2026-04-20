@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { Plan } from "@/types";
 
-const EXTRA_DEVICE_PRICE_DISPLAY = "₹199";
+const EXTRA_DEVICE_PRICE_DISPLAY = "₹649";
 
 export default function PricingPage() {
   const { subscriptionStatus, user } = useAuth();

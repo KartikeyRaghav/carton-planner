@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
@@ -736,10 +736,20 @@ export default function MonoCartonPage() {
     [],
   );
 
+  useEffect(() => {
+    const parser = localStorage.getItem("monoCartonRate") || "{}";
+    const prevForm = JSON.parse(parser);
+    if (parser != "{}") {
+      console.log(form);
+      setForm(prevForm);
+    }
+  }, []);
+
   const handleCalculate = async () => {
     setIsSubmitting(true);
     setError("");
     try {
+      localStorage.setItem("monoCartonRate", JSON.stringify(form));
       const res = await fetch("/api/mono-carton", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -904,7 +914,7 @@ export default function MonoCartonPage() {
                   step="1"
                 />
                 <Field
-                  label="Box / Sheet"
+                  label="Box per Sheet"
                   value={form.unitsPerSheet}
                   onChange={(v) => set("unitsPerSheet", v)}
                   step="1"
