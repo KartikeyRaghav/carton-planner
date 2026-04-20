@@ -20,20 +20,20 @@ const DEFAULTS: MonoCartonInputs = {
   unitsPerSheet: 6,
   noOfPlates: 5,
   plateRate: 225,
-  perColourCost: 4,
-  noOfColours: 225,
+  perColourCost: 225,
+  noOfColours: 4,
   includePantone: false,
   rateOfInk: 0,
   noOfPantoneColours: 0,
   printPerColour: 0,
   uvCoating: false,
-  uvCoatingRate: 0,
+  uvCoatingRate: 3,
   dripOff: true,
-  dripOffRate: 2,
+  dripOffRate: 1.5,
   warnish: false,
-  warnishRate: 0,
+  warnishRate: 7,
   lamination: false,
-  laminationRate: 0,
+  laminationRate: 4,
   dieCost: 1200,
   dieSetting: 300,
   dieCutting: 250,
@@ -946,7 +946,12 @@ export default function MonoCartonPage() {
                 <input
                   type="checkbox"
                   checked={form.includePantone}
-                  onChange={(e) => set("includePantone", e.target.checked)}
+                  onChange={(e) => {
+                    set("includePantone", e.target.checked);
+                    set("rateOfInk", e.target.checked ? 1000 : 0);
+                    set("noOfPantoneColours", e.target.checked ? 1 : 0);
+                    set("printPerColour", e.target.checked ? 250 : 0);
+                  }}
                   className="w-4 h-4 accent-brand-500"
                 />
                 <span className="text-sm font-semibold text-surface-700">
@@ -972,27 +977,6 @@ export default function MonoCartonPage() {
                   value={form.printPerColour}
                   onChange={(v) => set("printPerColour", v)}
                   disabled={!form.includePantone}
-                />
-              </div>
-            </Section>
-
-            {/* Die Section */}
-            <Section title="Die Section">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <Field
-                  label="Die Cost (₹)"
-                  value={form.dieCost}
-                  onChange={(v) => set("dieCost", v)}
-                />
-                <Field
-                  label="Die Setting (₹)"
-                  value={form.dieSetting}
-                  onChange={(v) => set("dieSetting", v)}
-                />
-                <Field
-                  label="Die Cutting (₹/1000)"
-                  value={form.dieCutting}
-                  onChange={(v) => set("dieCutting", v)}
                 />
               </div>
             </Section>
@@ -1031,9 +1015,16 @@ export default function MonoCartonPage() {
                     }`}
                   >
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="coatingLamination"
                       checked={form[key] as boolean}
-                      onChange={(e) => set(key, e.target.checked as any)}
+                      onChange={() => {
+                        set("uvCoating", false as any);
+                        set("dripOff", false as any);
+                        set("warnish", false as any);
+                        set("lamination", false as any);
+                        set(key, true as any);
+                      }}
                       className="w-4 h-4 accent-brand-500 flex-shrink-0"
                     />
                     <span className="text-sm font-medium text-surface-700 flex-1">
@@ -1047,8 +1038,9 @@ export default function MonoCartonPage() {
                         type="number"
                         step="0.1"
                         min="0"
-                        className="w-16 px-2 py-1 text-sm border border-surface-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-400"
+                        className="w-16 px-2 py-1 text-sm border border-surface-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-400 disabled:opacity-40 disabled:cursor-not-allowed"
                         value={form[rateKey] as number}
+                        disabled={!form[key]}
                         onChange={(e) =>
                           set(rateKey, parseFloat(e.target.value) || 0)
                         }
@@ -1080,7 +1072,7 @@ export default function MonoCartonPage() {
                     onChange={(v) => set("matPackLaminationRate", v)}
                   />
                   <Field
-                    label="Wastage ()"
+                    label="Wastage (%)"
                     value={form.matPackWastage}
                     onChange={(v) => set("matPackWastage", v)}
                     step="0.01"
@@ -1107,7 +1099,7 @@ export default function MonoCartonPage() {
                     onChange={(v) => set("leafingBlockCost", v)}
                   />
                   <Field
-                    label="Per Box Cost (₹)"
+                    label="Per Box Cost (Paise)"
                     value={form.leafingPerBoxCost}
                     onChange={(v) => set("leafingPerBoxCost", v)}
                     step="0.01"
@@ -1133,7 +1125,7 @@ export default function MonoCartonPage() {
                     onChange={(v) => set("embossingBlockCost", v)}
                   />
                   <Field
-                    label="Per Box Cost (₹)"
+                    label="Per Box Cost (Paise)"
                     value={form.embossingPerBoxCost}
                     onChange={(v) => set("embossingPerBoxCost", v)}
                     step="0.01"
@@ -1141,6 +1133,27 @@ export default function MonoCartonPage() {
                 </div>
               </Section>
             </div>
+
+            {/* Die Section */}
+            <Section title="Die Section">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <Field
+                  label="Die Cost (₹)"
+                  value={form.dieCost}
+                  onChange={(v) => set("dieCost", v)}
+                />
+                <Field
+                  label="Die Setting (₹)"
+                  value={form.dieSetting}
+                  onChange={(v) => set("dieSetting", v)}
+                />
+                <Field
+                  label="Die Cutting (₹/1000)"
+                  value={form.dieCutting}
+                  onChange={(v) => set("dieCutting", v)}
+                />
+              </div>
+            </Section>
 
             {/* Pasting & Packing */}
             <Section title="Pasting">
@@ -1168,8 +1181,8 @@ export default function MonoCartonPage() {
               </div>
             </Section>
 
-            <Section title="Packaging">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <Section title="Packaging & Delivery">
+              <div className="grid grid-cols-2 gap-3 max-w-sm">
                 <Field
                   label="No. of Pkt"
                   value={form.noOfPkt}
@@ -1177,14 +1190,9 @@ export default function MonoCartonPage() {
                   step="1"
                 />
                 <Field
-                  label="Bag Rate (₹/pkt)"
+                  label="Bag/Box Rate (₹/pkt)"
                   value={form.bagRate}
                   onChange={(v) => set("bagRate", v)}
-                />
-                <Field
-                  label="Box Rate (₹/pkt)"
-                  value={form.boxRate}
-                  onChange={(v) => set("boxRate", v)}
                 />
               </div>
             </Section>

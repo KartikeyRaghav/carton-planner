@@ -59,6 +59,7 @@ export default function HistoryPage() {
       .then((data) => {
         if (data.success) {
           setSheetCalcs(data.data.calculations);
+          console.log(data.data.calculations);
           setSheetPagination(data.data.pagination);
         }
       })
@@ -246,34 +247,29 @@ export default function HistoryPage() {
                                 key={j}
                                 className="bg-white rounded-xl p-3 border border-surface-100"
                               >
-                                <p className="text-xs font-semibold text-surface-600 mb-2 truncate">
-                                  {layout.label}
-                                </p>
+                                <div className="flex justify-between">
+                                  <p className="text-xs font-semibold text-surface-600 mb-2 truncate">
+                                    {layout.label}
+                                  </p>
+                                  <p className="text-xs font-semibold text-surface-600 mb-2 truncate">
+                                    {layout.grid}
+                                  </p>
+                                </div>
                                 <div className="space-y-1">
+                                  <div className="flex justify-between text-xs">
+                                    <span className="text-surface-400">
+                                      Length
+                                    </span>
+                                    <span className="font-mono font-500 text-brand-600">
+                                      {layout.length?.toFixed(1)} {calc.unit}
+                                    </span>
+                                  </div>
                                   <div className="flex justify-between text-xs">
                                     <span className="text-surface-400">
                                       Width
                                     </span>
                                     <span className="font-mono font-500 text-brand-600">
-                                      {layout.sheetWidth?.toFixed(1)}{" "}
-                                      {calc.unit}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between text-xs">
-                                    <span className="text-surface-400">
-                                      Height
-                                    </span>
-                                    <span className="font-mono font-500 text-brand-600">
-                                      {layout.sheetHeight?.toFixed(1)}{" "}
-                                      {calc.unit}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between text-xs">
-                                    <span className="text-surface-400">
-                                      Grain
-                                    </span>
-                                    <span className="text-surface-600">
-                                      {layout.grainDirection}
+                                      {layout.width?.toFixed(1)} {calc.unit}
                                     </span>
                                   </div>
                                 </div>

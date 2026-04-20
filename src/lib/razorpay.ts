@@ -37,8 +37,8 @@ export interface PlanPricing {
 }
 
 export const PLAN_PRICES: PlanPricing = {
-  quarterly: { amount: 129900, display: "₹1299", duration: 90 },
-  half_yearly: { amount: 229900, display: "₹2,299", duration: 180 },
+  quarterly: { amount: 109900, display: "₹1,099", duration: 90 },
+  half_yearly: { amount: 199900, display: "₹1,999", duration: 180 },
   // yearly:   { amount: 399900, display: '₹3,999',  duration: 365 },
 };
 

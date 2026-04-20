@@ -106,7 +106,7 @@ export default function SignupPage() {
               Create your account
             </h1>
             <p className="text-surface-500">
-              Free for 24 hours — no card needed
+              Free for 7 days — no card needed
             </p>
           </div>
 
