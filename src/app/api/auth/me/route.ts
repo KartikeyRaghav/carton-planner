@@ -5,7 +5,28 @@ import { apiSuccess, apiError, apiUnauthorized } from "@/lib/api-response";
 export async function GET(req: NextRequest) {
   try {
     const userId = req.headers.get("x-user-id");
-    if (!userId) return apiUnauthorized();
+    const deviceId = req.cookies.get("device_id")?.value;
+
+    if (!userId || !deviceId) {
+      return apiUnauthorized("Missing authentication context");
+    }
+
+    const session = await prisma.deviceSession.findFirst({
+      where: {
+        userId: Number(userId),
+        deviceId,
+        isActive: true,
+      },
+    });
+
+    if (!session) {
+      return apiUnauthorized("Invalid or expired device session");
+    }
+
+    await prisma.deviceSession.update({
+      where: { id: session.id },
+      data: { lastActive: new Date() },
+    });
 
     const user = await prisma.user.findUnique({
       where: { id: Number(userId) },
@@ -36,6 +57,7 @@ export async function GET(req: NextRequest) {
 
     const now = new Date();
     const isTrialing = user.trialEndsAt > now;
+
     const isSubscribed = !!(
       user.subscription &&
       user.subscription.status === "active" &&
@@ -43,6 +65,7 @@ export async function GET(req: NextRequest) {
     );
 
     let daysRemaining: number | undefined;
+
     if (isTrialing) {
       daysRemaining = Math.ceil(
         (user.trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),

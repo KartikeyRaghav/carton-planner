@@ -10,7 +10,7 @@ const signupSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   password: z.string().min(8),
-  mobile: z.string().length(10),
+  mobile: z.string().regex(/^[0-9]{10}$/),
 });
 
 export async function POST(req: NextRequest) {
@@ -32,15 +32,9 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12);
 
     const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 7); // 7-day free trial
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
     const deviceId = uuidv4();
-    // Prisma string fields don't accept undefined — use null instead
-    const userAgent = req.headers.get("user-agent") ?? null;
-    const ipAddress =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      null;
 
     const user = await prisma.user.create({
       data: {
@@ -53,8 +47,10 @@ export async function POST(req: NextRequest) {
           create: {
             deviceId,
             deviceName: "First Device",
-            userAgent,
-            ipAddress,
+            userAgent: req.headers.get("user-agent") || "",
+            ipAddress: req.ip || "",
+            isActive: true,
+            lastActive: new Date(),
           },
         },
       },
@@ -69,8 +65,15 @@ export async function POST(req: NextRequest) {
 
     const token = signToken({ userId: user.id, email: user.email, deviceId });
 
-    const response = apiSuccess({ user, token }, 201);
+    const response = apiSuccess({ user, token, deviceId }, 201);
     response.cookies.set("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    });
+    response.cookies.set("device_id", deviceId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

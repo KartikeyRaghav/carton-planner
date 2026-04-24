@@ -21,6 +21,8 @@ interface AuthContextValue {
     password: string,
     deviceName?: string,
   ) => Promise<void>;
+  resetDeviceEmail: (email: string) => Promise<void>;
+  resetDeviceVerify: (token: string) => Promise<void>;
   resetPasswordGen: (email: string) => Promise<void>;
   resetPasswordVerify: (
     email: string,
@@ -87,16 +89,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUser().finally(() => setIsLoading(false));
   }, [refreshUser]);
 
-  const login = async (
-    email: string,
-    password: string,
-    deviceName?: string,
-  ) => {
+  const login = async (email: string, password: string) => {
+    const deviceId = localStorage.getItem("deviceId");
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, password, deviceName }),
+      body: JSON.stringify({
+        email,
+        password,
+        localStorageDeviceId: deviceId || "",
+      }),
     });
 
     const data = await res.json();
@@ -107,6 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const newToken: string = data.data.token;
     setToken(newToken);
     localStorage.setItem("auth_token", newToken);
+    localStorage.setItem("deviceId", data.data.deviceId);
 
     // Use data returned directly from login — avoids a second round-trip
     // and the race condition where refreshUser fires before the cookie lands.
@@ -137,11 +141,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const newToken: string = data.data.token;
     setToken(newToken);
     localStorage.setItem("auth_token", newToken);
+    localStorage.setItem("deviceId", data.data.deviceId);
     localStorage.removeItem("signup_form");
     setUser(data.data.user);
 
     // Fetch full profile now that cookie is set by the response
     await refreshUser();
+  };
+
+  const resetDeviceEmail = async (email: string) => {
+    try {
+      const res = await fetch("/api/auth/request-device-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.error || "Reset Password Generation Failed");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetDeviceVerify = async (token: string) => {
+    try {
+      const res = await fetch(
+        `/api/auth/reset-device-sessions?token=${token}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        },
+      );
+
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.error || "Reset Password Verification Failed");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const resetPasswordGen = async (email: string) => {
@@ -242,6 +283,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        resetDeviceEmail,
+        resetDeviceVerify,
         resetPasswordGen,
         resetPasswordVerify,
         otpGen,

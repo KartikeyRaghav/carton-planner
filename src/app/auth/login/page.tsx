@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
-  const { login, resetPasswordGen, isAuthenticated, isLoading } = useAuth();
+  const {
+    login,
+    resetDeviceEmail,
+    resetPasswordGen,
+    isAuthenticated,
+    isLoading,
+  } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -28,6 +34,7 @@ export default function LoginPage() {
       await login(form.email, form.password);
       router.replace("/dashboard");
     } catch (err: any) {
+      console.log(err.message);
       setError(err.message || "Login failed");
     } finally {
       setIsSubmitting(false);
@@ -47,7 +54,26 @@ export default function LoginPage() {
       await resetPasswordGen(form.email);
       setError("An email containing reset password link has been sent.");
     } catch (err: any) {
-      setError(err.message || "Login failed");
+      setError(err.message || "Failed to send email");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  const handleResetDeviceSessions = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsSendingEmail(true);
+    if (!form.email) {
+      setError("Please enter email.");
+      setIsSendingEmail(false);
+      return;
+    }
+    try {
+      await resetDeviceEmail(form.email);
+      setError("An email containing reset devices link has been sent.");
+    } catch (err: any) {
+      setError(err.message || "Failed to send email");
     } finally {
       setIsSendingEmail(false);
     }
@@ -113,6 +139,44 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+
+          {error &&
+            error ==
+              "Device limit reached (2/2). Purchase an extra device slot." && (
+              <button
+                type="button"
+                onClick={handleResetDeviceSessions}
+                disabled={isSendingEmail}
+                className="btn-primary text-sm underline w-full mb-5"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2 justify-center">
+                    <svg
+                      className="animate-spin w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Sending Email...
+                  </span>
+                ) : (
+                  "Reset Device Sessions"
+                )}
+              </button>
+            )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
