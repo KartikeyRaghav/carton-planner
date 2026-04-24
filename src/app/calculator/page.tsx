@@ -31,7 +31,6 @@ export default function CalculatorPage() {
     const parser = localStorage.getItem("sheetSizeCalculator") || "{}";
     const prevForm = JSON.parse(parser);
     if (parser != "{}") {
-      console.log(form);
       setForm(prevForm);
     }
   }, []);

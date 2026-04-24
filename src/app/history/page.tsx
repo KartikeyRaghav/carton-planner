@@ -59,7 +59,6 @@ export default function HistoryPage() {
       .then((data) => {
         if (data.success) {
           setSheetCalcs(data.data.calculations);
-          console.log(data.data.calculations);
           setSheetPagination(data.data.pagination);
         }
       })
@@ -333,7 +332,6 @@ export default function HistoryPage() {
             ) : (
               <div className="space-y-3 animate-in">
                 {monoCalcs.map((calc, i) => {
-                  console.log(calc);
                   const isOpen = monoExpanded === calc.id;
                   const lineItems: any[] = calc.results?.lineItems ?? [];
                   return (

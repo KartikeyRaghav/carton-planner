@@ -740,7 +740,6 @@ export default function MonoCartonPage() {
     const parser = localStorage.getItem("monoCartonRate") || "{}";
     const prevForm = JSON.parse(parser);
     if (parser != "{}") {
-      console.log(form);
       setForm(prevForm);
     }
   }, []);
